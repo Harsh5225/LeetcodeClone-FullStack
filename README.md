@@ -1,487 +1,265 @@
-# CodeBuddy - Collaborative Coding Platform
+# CodeBuddy — Collaborative Coding Platform
 
-## 🚀 Overview
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Socket.IO](https://img.shields.io/badge/Socket.IO-Realtime-black?logo=socket.io)](https://socket.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-CodeBuddy is a modern, full-stack collaborative coding platform designed to help developers improve their algorithmic problem-solving skills. Built with React, Node.js, and Socket.IO, it provides real-time collaboration features, AI-powered assistance, and comprehensive problem management.
+A full-stack collaborative coding platform for practicing algorithmic problem-solving in real time — with a Monaco-based
+editor, live multi-user collaboration, AI-assisted debugging, and an admin panel for problem management.
 
-## ✨ Key Features
+<!-- Optional: add a screenshot or GIF here once available -->
+<!-- ![CodeBuddy demo](./docs/demo.gif) -->
 
-### 🔐 Authentication & User Management
-- **Secure Authentication**: JWT-based authentication with Redis session management
-- **Role-based Access**: User and Admin roles with different permissions
-- **Profile Management**: Customizable user profiles with photo upload
-- **Session Security**: Token blacklisting and automatic logout
+## Table of Contents
+- [Key Features](#key-features)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [API Reference](#api-reference)
+- [Socket.IO Events](#socketio-events)
+- [Security](#security)
+- [Performance](#performance-optimizations)
+- [Testing](#testing)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [License](#license)
 
-### 💻 Problem Solving Environment
-- **Monaco Editor Integration**: Professional code editor with syntax highlighting
-- **Multi-language Support**: JavaScript, Java, C++, Python
-- **Real-time Code Execution**: Judge0 API integration for code testing
-- **Test Case Management**: Visible and hidden test cases with detailed feedback
+## Key Features
 
-### 🤝 Real-time Collaboration
-- **Live Code Sharing**: Real-time collaborative editing
-- **Typing Indicators**: See when others are typing
-- **User Presence**: Online/Away/Busy/Offline status tracking
-- **Room-based Sessions**: Create and join coding rooms
-- **Collaborative Chat**: In-room messaging system
+**Authentication & User Management**
+- JWT-based auth with Redis session storage and token blacklisting on logout
+- Role-based access control (User / Admin)
+- Editable profiles with photo upload
 
-### 🤖 AI-Powered Features
-- **AI Assistant**: Google Gemini integration for coding help
-- **Contextual Hints**: Problem-specific guidance and debugging
-- **Solution Explanations**: Step-by-step problem breakdowns
+**Problem-Solving Environment**
+- Monaco Editor with syntax highlighting across JavaScript, Java, C++, and Python
+- Real-time code execution and evaluation via the Judge0 API
+- Visible and hidden test cases with detailed feedback
 
-### 📹 Educational Content
-- **Video Solutions**: Upload and stream solution explanations
-- **Editorial Content**: Comprehensive problem tutorials
-- **Reference Solutions**: Multiple language implementations
+**Real-Time Collaboration**
+- Live collaborative editing with typing indicators and cursor sharing
+- Room-based sessions with online/away/busy/offline presence tracking
+- In-room chat alongside the shared editor
 
-### 👨‍💼 Admin Panel
-- **Problem Management**: Create, edit, and delete problems
-- **Video Upload**: Cloudinary integration for video content
-- **User Analytics**: Track user progress and submissions
-- **Bulk Operations**: Mass problem creation and management
+**AI-Powered Assistance**
+- Google Gemini integration for contextual hints and debugging help
+- Step-by-step solution explanations
 
-## 🏗️ Architecture
+**Educational Content & Admin Panel**
+- Video solution uploads (Cloudinary) with editorial write-ups
+- Problem CRUD, bulk operations, and basic user/submission analytics for admins
 
-### Frontend (React + Vite)
+## Architecture
+
 ```
-Frontend/
-├── src/
-│   ├── components/          # Reusable UI components
-│   │   ├── CollaborativeEditor.jsx
-│   │   ├── TypingIndicator.jsx
-│   │   ├── UserPresenceIndicator.jsx
-│   │   ├── ChatAi.jsx
-│   │   └── ...
-│   ├── pages/              # Main application pages
-│   │   ├── Home.jsx
-│   │   ├── ProblemPageUpdated.jsx
-│   │   ├── CollaborativeProblemPage.jsx
-│   │   ├── AdminPanel.jsx
-│   │   └── ...
-│   ├── features/           # Redux slices and API
-│   │   ├── auth/
-│   │   ├── problem/
-│   │   ├── chatMessage/
-│   │   └── submission/
-│   ├── hooks/              # Custom React hooks
-│   │   ├── useSocket.js
-│   │   └── useLenis.js
-│   └── utils/              # Utility functions
-│       └── axiosClient.js
+Frontend/                       Backend/
+├── src/                        ├── controllers/       # Business logic
+│   ├── components/             ├── models/             # MongoDB schemas
+│   ├── pages/                  ├── routes/             # API endpoints
+│   ├── features/  (Redux)      ├── middlewares/        # Auth, roles, rate limiting
+│   ├── hooks/                  ├── socket/             # Socket.IO handlers
+│   └── utils/                  ├── utils/              # Judge0, Cloudinary, validation
+                                 └── database/           # MongoDB + Redis connections
 ```
 
-### Backend (Node.js + Express)
-```
-Backend/
-├── controllers/            # Business logic
-│   ├── user.controller.js
-│   ├── userProblem.controller.js
-│   ├── submission.controller.js
-│   ├── solveDoubt.controller.js
-│   └── videoSection.controller.js
-├── models/                 # MongoDB schemas
-│   ├── user.js
-│   ├── problem.js
-│   ├── submission.js
-│   └── solutionVideo.js
-├── routes/                 # API endpoints
-│   ├── userAuth.js
-│   ├── problemcreationRoute.js
-│   ├── submission.routes.js
-│   └── collaboration.routes.js
-├── middlewares/            # Custom middleware
-│   ├── isAuthenticate.js
-│   ├── userMiddleware.js
-│   ├── adminMiddleware.js
-│   └── rateLimiter.js
-├── socket/                 # Socket.IO handlers
-│   └── socketHandlers.js
-├── utils/                  # Utility functions
-│   ├── submitBatch.js
-│   ├── submitToken.js
-│   ├── Cloudinary.js
-│   └── validator.js
-└── database/               # Database connections
-    ├── db.js
-    └── redis.js
-```
+## Tech Stack
 
-## 🛠️ Technology Stack
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React 19, Vite, Redux Toolkit, React Router, Tailwind CSS + DaisyUI, Monaco Editor, Socket.IO Client, Framer Motion, React Hook Form + Zod |
+| **Backend** | Node.js, Express, MongoDB + Mongoose, Redis, Socket.IO, JWT, Multer |
+| **External Services** | Judge0 CE (code execution), Cloudinary (media storage), Google Gemini (AI assistance) |
 
-### Frontend
-- **React 19** - UI framework
-- **Vite** - Build tool and dev server
-- **Redux Toolkit** - State management
-- **React Router** - Client-side routing
-- **Tailwind CSS + DaisyUI** - Styling
-- **Monaco Editor** - Code editor
-- **Socket.IO Client** - Real-time communication
-- **Framer Motion** - Animations
-- **React Hook Form + Zod** - Form handling and validation
-
-### Backend
-- **Node.js + Express** - Server framework
-- **MongoDB + Mongoose** - Database
-- **Redis** - Session storage and caching
-- **Socket.IO** - Real-time communication
-- **JWT** - Authentication
-- **Cloudinary** - Media storage
-- **Judge0 API** - Code execution
-- **Google Gemini AI** - AI assistance
-- **Multer** - File uploads
-
-### External Services
-- **Judge0 CE** - Code compilation and execution
-- **Cloudinary** - Video and image storage
-- **Google Gemini** - AI-powered coding assistance
-- **Redis Cloud** - Session management
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher)
+- Node.js v18+
 - MongoDB
 - Redis
-- Judge0 API access
-- Cloudinary account
-- Google Gemini API key
+- Judge0 API access, a Cloudinary account, and a Google Gemini API key
 
 ### Installation
 
-1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/codebuddy.git
-cd codebuddy
-```
+git clone https://github.com/Harsh5225/CodeBuddy.git
+cd CodeBuddy
 
-2. **Install dependencies**
-```bash
 # Backend
-cd Backend
-npm install
+cd Backend && npm install
 
 # Frontend
-cd ../Frontend
-npm install
+cd ../Frontend && npm install
 ```
 
-3. **Environment Setup**
+### Environment Variables
 
-Create `.env` files in both Backend and Frontend directories:
-
-**Backend/.env**
+**`Backend/.env`**
 ```env
-# Database
 MONGODB_URI=mongodb://localhost:27017/codebuddy
 
-# Redis
 REDIS_HOST=your-redis-host
 REDIS_PASSWORD=your-redis-password
 
-# JWT
 JWT_SECRET=your-jwt-secret
 
-# Judge0 API
 RAPIDAPI_KEY=your-rapidapi-key
 RAPIDAPI_HOST=judge0-ce.p.rapidapi.com
 
-# Cloudinary
 CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
 
-# Google Gemini
 GEMINI_KEY=your-gemini-api-key
 
-# Server
 PORT=3000
 NODE_ENV=development
 ```
 
-**Frontend/.env**
+**`Frontend/.env`**
 ```env
 VITE_API_BASE_URL=http://localhost:3000
 ```
 
-4. **Start the development servers**
+### Run Locally
+
 ```bash
-# Backend (Terminal 1)
-cd Backend
-npm run dev
+# Terminal 1 — Backend
+cd Backend && npm run dev
 
-# Frontend (Terminal 2)
-cd Frontend
-npm run dev
+# Terminal 2 — Frontend
+cd Frontend && npm run dev
 ```
 
-5. **Access the application**
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:3000
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:3000`
 
-## 📚 API Documentation
+## API Reference
 
-### Authentication Endpoints
+**Authentication**
 ```
-POST /user/register          # User registration
-POST /user/login             # User login
-GET  /user/logout            # User logout
-GET  /user/check             # Check authentication status
-GET  /user/profile           # Get user profile
-PUT  /user/edit-profile      # Update user profile
-```
-
-### Problem Management
-```
-GET    /problem              # Get all problems (paginated)
-GET    /problem/:id          # Get specific problem
-POST   /problem/create       # Create new problem (admin)
-PATCH  /problem/:id          # Update problem (admin)
-DELETE /problem/:id          # Delete problem (admin)
-GET    /problem/userSolvedProblem  # Get user's solved problems
+POST   /user/register
+POST   /user/login
+GET    /user/logout
+GET    /user/check
+GET    /user/profile
+PUT    /user/edit-profile
 ```
 
-### Code Submission
+**Problems**
 ```
-POST /submission/run/:id     # Run code with visible test cases
-POST /submission/submit/:id  # Submit code for evaluation
-GET  /submission/recent      # Get recent submissions
-```
-
-### Collaboration
-```
-POST /collaboration/rooms/create     # Create collaboration room
-GET  /collaboration/rooms/:roomId    # Get room information
-GET  /collaboration/rooms            # Get all active rooms
+GET    /problem                      # paginated list
+GET    /problem/:id
+POST   /problem/create               # admin
+PATCH  /problem/:id                  # admin
+DELETE /problem/:id                  # admin
+GET    /problem/userSolvedProblem
 ```
 
-### AI Assistant
+**Submissions**
 ```
-POST /ai/chat               # Chat with AI assistant
-```
-
-### Video Management (Admin)
-```
-GET    /video/create/:problemId     # Generate upload signature
-POST   /video/save                 # Save video metadata
-DELETE /video/delete/:problemId     # Delete video
+POST   /submission/run/:id           # run against visible test cases
+POST   /submission/submit/:id        # full evaluation
+GET    /submission/recent
 ```
 
-## 🔌 Socket.IO Events
+**Collaboration**
+```
+POST   /collaboration/rooms/create
+GET    /collaboration/rooms/:roomId
+GET    /collaboration/rooms
+```
 
-### Client to Server Events
+**AI Assistant**
+```
+POST   /ai/chat
+```
+
+**Video (Admin)**
+```
+GET    /video/create/:problemId      # generate upload signature
+POST   /video/save
+DELETE /video/delete/:problemId
+```
+
+## Socket.IO Events
+
+**Client → Server**
 ```javascript
-// Room Management
 socket.emit('join-room', { roomId, userId, userName, problemId })
 socket.emit('leave-room', { roomId })
-
-// Code Collaboration
 socket.emit('code-change', { roomId, code, changes })
 socket.emit('language-change', { roomId, language })
 socket.emit('cursor-change', { roomId, position })
-
-// Typing & Presence
 socket.emit('typing-start', { roomId })
 socket.emit('typing-stop', { roomId })
-socket.emit('user-activity', { roomId })
 socket.emit('status-change', { roomId, status })
-
-// Communication
 socket.emit('send-message', { roomId, message })
 socket.emit('share-execution', { roomId, result, type })
 ```
 
-### Server to Client Events
+**Server → Client**
 ```javascript
-// Room State
 socket.on('room-state', { code, language, users, messages, typingUsers })
 socket.on('user-joined', { user, totalUsers, onlineUsers })
 socket.on('user-left', { userId, userName, totalUsers })
-
-// Code Updates
 socket.on('code-update', { code, changes, userId })
 socket.on('language-update', { language })
 socket.on('cursor-update', { userId, userName, position })
-
-// Presence & Typing
 socket.on('user-typing', { userId, userName, isTyping, typingUsers })
 socket.on('user-presence-update', { userId, status, lastActivity })
-socket.on('user-status-changed', { userId, status, lastActivity })
-
-// Communication
 socket.on('new-message', message)
 socket.on('execution-shared', executionMessage)
 ```
 
-## 🎨 UI/UX Features
+## Security
 
-### Design System
-- **Dark Theme**: Modern dark UI with blue accent colors
-- **Responsive Design**: Mobile-first approach with breakpoints
-- **Animations**: Smooth transitions and micro-interactions
-- **Accessibility**: ARIA labels and keyboard navigation
+- JWT-based authentication with Redis-backed token blacklisting
+- bcrypt password hashing
+- Redis-based rate limiting on sensitive endpoints
+- CORS configuration for cross-origin requests
+- Request validation via Zod schemas
+- Mongoose ODM (parameterized queries, no raw query injection surface)
 
-### Key Components
-- **Monaco Editor**: Professional code editing experience
-- **Real-time Indicators**: Typing and presence visualization
-- **Drag & Drop Chat**: Moveable chat interface
-- **Status Avatars**: Visual user presence indicators
-- **Progress Tracking**: Problem solving statistics
+## Performance Optimizations
 
-## 🔒 Security Features
+- **Frontend**: route-based code splitting, memoized components, Vite build optimizations
+- **Backend**: MongoDB indexing on frequently queried fields, Redis caching for sessions and rate limits, connection pooling
+- **Real-time**: debounced socket events and selective (room-scoped) broadcasting to reduce unnecessary traffic
 
-### Authentication Security
-- **JWT Tokens**: Secure token-based authentication
-- **Token Blacklisting**: Redis-based token revocation
-- **Session Management**: Automatic logout on inactivity
-- **Password Hashing**: bcrypt for secure password storage
+## Testing
 
-### API Security
-- **Rate Limiting**: Redis-based request throttling
-- **CORS Configuration**: Secure cross-origin requests
-- **Input Validation**: Zod schema validation
-- **Role-based Access**: Admin and user permission levels
+The project uses Jest/Supertest for backend API testing and includes a manual QA checklist covering auth flow, the
+problem-solving workflow, real-time collaboration, admin functionality, and cross-browser/mobile behavior. Run
+`npm run test` in `Backend/` or `Frontend/` to execute the available test suites.
 
-### Data Protection
-- **Secure File Upload**: Cloudinary integration with validation
-- **SQL Injection Prevention**: Mongoose ODM protection
-- **XSS Protection**: Input sanitization and validation
+> Note: test coverage is actively being expanded — see open issues for gaps.
 
-## 📊 Performance Optimizations
+## Roadmap
 
-### Frontend Optimizations
-- **Code Splitting**: Route-based lazy loading
-- **State Management**: Efficient Redux store structure
-- **Memoization**: React.memo and useMemo optimizations
-- **Bundle Optimization**: Vite build optimizations
+- WebRTC-based voice/video chat for collaboration rooms
+- Peer code review workflow
+- Timed contest mode
+- React Native mobile app
+- Service decomposition into microservices for independent scaling
+- GraphQL API layer
+- Progressive Web App support
 
-### Backend Optimizations
-- **Database Indexing**: Optimized MongoDB queries
-- **Redis Caching**: Session and rate limiting cache
-- **Connection Pooling**: Efficient database connections
-- **Memory Management**: Proper cleanup and garbage collection
+## Contributing
 
-### Real-time Optimizations
-- **Debounced Events**: Reduced socket.io traffic
-- **Selective Broadcasting**: Targeted event emission
-- **Connection Management**: Automatic reconnection handling
-
-## 🧪 Testing Strategy
-
-### Unit Testing
-```bash
-# Frontend tests
-cd Frontend
-npm run test
-
-# Backend tests
-cd Backend
-npm run test
-```
-
-### Integration Testing
-- API endpoint testing with Jest/Supertest
-- Socket.IO event testing
-- Database integration tests
-
-### Manual Testing Checklist
-- [ ] User registration and login flow
-- [ ] Problem solving workflow
-- [ ] Real-time collaboration features
-- [ ] Admin panel functionality
-- [ ] Mobile responsiveness
-- [ ] Cross-browser compatibility
-
-## 🚀 Deployment
-
-### Production Environment Variables
-```env
-# Security
-NODE_ENV=production
-JWT_SECRET=strong-production-secret
-
-# Database
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/codebuddy
-
-# Redis
-REDIS_HOST=production-redis-host
-REDIS_PASSWORD=production-redis-password
-
-# External APIs
-RAPIDAPI_KEY=production-rapidapi-key
-CLOUDINARY_CLOUD_NAME=production-cloudinary
-GEMINI_KEY=production-gemini-key
-```
-
-### Deployment Steps
-1. **Build the frontend**
-```bash
-cd Frontend
-npm run build
-```
-
-2. **Deploy backend** (Node.js hosting)
-3. **Deploy frontend** (Static hosting like Netlify/Vercel)
-4. **Configure environment variables**
-5. **Set up monitoring and logging**
-
-## 📈 Monitoring & Analytics
-
-### Performance Monitoring
-- **Response Times**: API endpoint performance
-- **Error Tracking**: Application error monitoring
-- **User Analytics**: Problem solving statistics
-- **Real-time Metrics**: Active users and rooms
-
-### Logging
-- **Structured Logging**: JSON-formatted logs
-- **Error Logging**: Comprehensive error tracking
-- **Audit Logs**: User action tracking
-- **Performance Logs**: Query and response time tracking
-
-## 🔮 Future Enhancements
-
-### Planned Features
-- **Voice/Video Chat**: WebRTC integration for voice communication
-- **Code Review System**: Peer code review functionality
-- **Contest Mode**: Timed coding competitions
-- **Mobile App**: React Native mobile application
-- **Advanced Analytics**: Detailed progress tracking
-
-### Technical Improvements
-- **Microservices**: Service decomposition for scalability
-- **GraphQL API**: More efficient data fetching
-- **Progressive Web App**: Offline functionality
-- **Advanced Caching**: Redis-based query caching
-
-## 🤝 Contributing
-
-### Development Workflow
 1. Fork the repository
 2. Create a feature branch
-3. Make your changes
-4. Add tests for new features
-5. Submit a pull request
+3. Make your changes and add tests where applicable
+4. Open a pull request
 
-### Code Standards
-- **ESLint**: JavaScript/React linting
-- **Prettier**: Code formatting
-- **Conventional Commits**: Standardized commit messages
-- **Code Reviews**: All changes require review
+Please follow the existing ESLint/Prettier config and use conventional commit messages. Bug reports should include a
+clear description, reproduction steps, and expected vs. actual behavior via the GitHub issue tracker.
 
-### Bug Reports
-Please use the GitHub issue tracker to report bugs with:
-- Detailed description
-- Steps to reproduce
-- Expected vs actual behavior
-- Environment information
+## License
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
+Licensed under the [MIT License](./LICENSE).
 
 ---
 
-* Built with ❤️ by the Harsh *
-
+Built by [Harsh](https://github.com/Harsh5225)
